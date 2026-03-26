@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Gap Analyzer</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+  
+
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">Skill<span>Gap</span></div>
+  <div class="sidebar-tagline">Your career intelligence tool</div>
+  <button class="nav-btn active" onclick="showSection('dashboard')" id="nav-dashboard">
+    <span class="nav-icon">🏠</span><span>Dashboard</span>
+  </button>
+  <button class="nav-btn" onclick="showSection('analyze')" id="nav-analyze">
+    <span class="nav-icon">🔍</span><span>Analyze</span>
+  </button>
+  <button class="nav-btn" onclick="showSection('results')" id="nav-results">
+    <span class="nav-icon">📊</span><span>Results</span>
+  </button>
+  <button class="nav-btn" onclick="showSection('resources')" id="nav-resources">
+    <span class="nav-icon">📚</span><span>Resources</span>
+  </button>
+  <button class="nav-btn" onclick="showSection('reports')" id="nav-reports">
+    <span class="nav-icon">📄</span><span>Reports</span>
+  </button>
+  <div class="sidebar-bottom">
+    <button class="dark-toggle" onclick="toggleDark()">🌙 <span>Dark Mode</span></button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ===== DASHBOARD ===== -->
+<div id="dashboard" class="section active">
+  <div class="page-title">Welcome Back 👋</div>
+  <div class="page-sub">Track your skill gaps and level up your career.</div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-val" id="dash-total">0</div><div class="stat-label">Skills Selected</div></div>
+    <div class="stat-card"><div class="stat-val" id="dash-assessed">0</div><div class="stat-label">Skills Assessed</div></div>
+    <div class="stat-card"><div class="stat-val" id="dash-score">—</div><div class="stat-label">Avg. Score</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🎯 Current Target Role</div>
+      <div class="card-sub">Your selected career path</div>
+      <div id="dash-role" style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;color:var(--accent);">Not selected yet</div>
+      <div class="progress-wrap" style="margin-top:16px;"><div class="progress-fill" id="dash-progress" style="width:0%"></div></div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-top:6px;"><span id="dash-pct">0%</span> match to target role</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📅 Recent Activity</div>
+      <div class="card-sub">Your latest actions</div>
+      <div id="activityLog"><div class="empty-state"><div class="empty-icon">💤</div>No activity yet</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🚀 Quick Start</div>
+    <div class="card-sub">Follow these steps to get your skill gap report</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">
+      <div style="flex:1;min-width:180px;background:var(--surface2);border-radius:12px;padding:16px;border-left:3px solid var(--accent);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:4px;">① Select Role</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Choose your target career</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:var(--surface2);border-radius:12px;padding:16px;border-left:3px solid var(--accent2);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:4px;">② Pick Skills</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Select skills you know</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:var(--surface2);border-radius:12px;padding:16px;border-left:3px solid var(--accent3);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:4px;">③ Take Quiz</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Assess your proficiency</div>
+      </div>
+      <div style="flex:1;min-width:180px;background:var(--surface2);border-radius:12px;padding:16px;border-left:3px solid var(--warn);">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:4px;">④ View Results</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Get insights + resources</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="showSection('analyze')">Start Analysis →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ANALYZE ===== -->
+<div id="analyze" class="section">
+  <div class="page-title">Analyze Skills</div>
+  <div class="page-sub">Select your target role, then choose skills you already know to get assessed.</div>
+
+  <div class="card">
+    <div class="card-title">🧑‍💻 Step 1 — Choose Your Target Role</div>
+    <div class="card-sub">Select the career path you want to aim for</div>
+    <div class="role-grid" id="roleGrid">
+      <div class="role-card" onclick="selectRole('frontend')">
+        <div class="role-icon">⚛️</div>
+        <div class="role-name">Frontend Dev</div>
+        <div class="role-desc">HTML, CSS, React, JS</div>
+      </div>
+      <div class="role-card" onclick="selectRole('backend')">
+        <div class="role-icon">🖥️</div>
+        <div class="role-name">Backend Dev</div>
+        <div class="role-desc">Node, Python, SQL, APIs</div>
+      </div>
+      <div class="role-card" onclick="selectRole('fullstack')">
+        <div class="role-icon">🔗</div>
+        <div class="role-name">Full Stack Dev</div>
+        <div class="role-desc">React, Node, DB, DevOps</div>
+      </div>
+      <div class="role-card" onclick="selectRole('data')">
+        <div class="role-icon">📊</div>
+        <div class="role-name">Data Analyst</div>
+        <div class="role-desc">Python, SQL, BI, Stats</div>
+      </div>
+      <div class="role-card" onclick="selectRole('ml')">
+        <div class="role-icon">🤖</div>
+        <div class="role-name">ML Engineer</div>
+        <div class="role-desc">Python, TF, Math, MLOps</div>
+      </div>
+      <div class="role-card" onclick="selectRole('devops')">
+        <div class="role-icon">⚙️</div>
+        <div class="role-name">DevOps Engineer</div>
+        <div class="role-desc">Docker, CI/CD, Linux, AWS</div>
+      </div>
+      <div class="role-card" onclick="selectRole('mobile')">
+        <div class="role-icon">📱</div>
+        <div class="role-name">Mobile Dev</div>
+        <div class="role-desc">React Native, Flutter, Swift</div>
+      </div>
+      <div class="role-card" onclick="selectRole('cybersec')">
+        <div class="role-icon">🔐</div>
+        <div class="role-name">Cybersecurity</div>
+        <div class="role-desc">Networking, Linux, Ethical Hacking</div>
+      </div>
+      <div class="role-card" onclick="selectRole('ux')">
+        <div class="role-icon">🎨</div>
+        <div class="role-name">UX Designer</div>
+        <div class="role-desc">Figma, Research, Prototyping</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="skillPickerCard" style="display:none;">
+    <div class="card-title">🧠 Step 2 — Select Skills You Know</div>
+    <div class="card-sub">Click the skills you have experience with. You'll be quizzed on each selected skill.</div>
+    <div id="skillPickerArea"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="startAssessments()" id="startAssessBtn">🎯 Start Assessment</button>
+      <button class="btn-outline" onclick="clearSelections()">Clear All</button>
+    </div>
+  </div>
+
+  <div class="card" id="assessmentStatusCard" style="display:none;">
+    <div class="card-title">⚡ Assessment Progress</div>
+    <div class="card-sub">Complete assessments for all selected skills</div>
+    <div id="assessmentStatusList"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="showSection('results')" id="viewResultsBtn" style="display:none;">View Results →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULTS ===== -->
+<div id="results" class="section">
+  <div class="page-title">Your Results</div>
+  <div class="page-sub">Detailed breakdown of your skill proficiency</div>
+
+  <div id="noResultsYet" class="card">
+    <div class="empty-state"><div class="empty-icon">📊</div>No analysis done yet. Go to Analyze to get started!</div>
+  </div>
+
+  <div id="resultsContent" style="display:none;">
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-val" id="res-strong" style="color:var(--good)">0</div><div class="stat-label">Strong Skills</div></div>
+      <div class="stat-card"><div class="stat-val" id="res-avg" style="color:var(--warn)">0</div><div class="stat-label">Need Practice</div></div>
+      <div class="stat-card"><div class="stat-val" id="res-weak" style="color:var(--bad)">0</div><div class="stat-label">Weak / Missing</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">📈 Score Breakdown</div>
+        <div class="card-sub">Radar chart of your assessed skills</div>
+        <div class="chart-box"><canvas id="radarChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏷️ Skill Status</div>
+        <div class="card-sub">All required skills for your role</div>
+        <div id="skillStatusList" class="result-skill-list"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✅ Skills You're Strong In</div>
+      <div class="card-sub">Keep it up! These are your top skills.</div>
+      <div id="strongSkillsArea" class="skill-chips"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚠️ Skills That Need Work</div>
+      <div class="card-sub">You have some knowledge but need to improve.</div>
+      <div id="avgSkillsArea" class="skill-chips"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">❌ Missing / Weak Skills</div>
+      <div class="card-sub">These skills are critical for your role but need significant work.</div>
+      <div id="weakSkillsArea" class="skill-chips"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="saveReport()">💾 Save Report</button>
+      <button class="btn-outline" onclick="showSection('resources')">📚 View Resources</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESOURCES ===== -->
+<div id="resources" class="section">
+  <div class="page-title">Learning Resources</div>
+  <div class="page-sub">Curated links to help you improve your weak and missing skills</div>
+
+  <div id="noResourcesYet" class="card">
+    <div class="empty-state"><div class="empty-icon">📚</div>Complete an analysis first to get personalized resources.</div>
+  </div>
+
+  <div id="resourcesContent" style="display:none;">
+    <div class="card" id="resourcesListCard">
+      <div class="card-title">🎯 Personalized Learning Path</div>
+      <div class="card-sub">Resources for the skills you need to improve</div>
+      <div id="resourcesList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REPORTS ===== -->
+<div id="reports" class="section">
+  <div class="page-title">Reports</div>
+  <div class="page-sub">History of your skill gap analyses</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📚 Saved Reports</div>
+      <div class="card-sub">Your past analyses</div>
+      <div id="reportList"><div class="empty-state"><div class="empty-icon">📋</div>No reports saved yet</div></div>
+      <div class="btn-row">
+        <button class="btn-outline" onclick="downloadReport()">⬇️ Download Latest</button>
+        <button class="btn-outline btn-danger" onclick="clearReports()">🗑️ Clear All</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏆 Achievements</div>
+      <div class="card-sub">Milestones you've unlocked</div>
+      <div class="achievement-grid">
+        <div class="achievement-card" id="ach-first">
+          <div class="achievement-icon">🚀</div>
+          <div class="achievement-name">First Steps</div>
+          <div class="achievement-desc">Complete first analysis</div>
+        </div>
+        <div class="achievement-card locked" id="ach-50">
+          <div class="achievement-icon">📈</div>
+          <div class="achievement-name">Halfway There</div>
+          <div class="achievement-desc">Score 50%+ on a role</div>
+        </div>
+        <div class="achievement-card locked" id="ach-80">
+          <div class="achievement-icon">🌟</div>
+          <div class="achievement-name">Almost Pro</div>
+          <div class="achievement-desc">Score 80%+ on a role</div>
+        </div>
+        <div class="achievement-card locked" id="ach-3role">
+          <div class="achievement-icon">🎭</div>
+          <div class="achievement-name">Explorer</div>
+          <div class="achievement-desc">Analyze 3 different roles</div>
+        </div>
+        <div class="achievement-card locked" id="ach-10skill">
+          <div class="achievement-icon">🧠</div>
+          <div class="achievement-name">Skill Collector</div>
+          <div class="achievement-desc">Select 10+ skills</div>
+        </div>
+        <div class="achievement-card locked" id="ach-perfect">
+          <div class="achievement-icon">💎</div>
+          <div class="achievement-name">Perfect Score</div>
+          <div class="achievement-desc">Score 100% on a skill</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Progress History</div>
+    <div class="card-sub">Score trend over your saved reports</div>
+    <div class="chart-box"><canvas id="historyChart"></canvas></div>
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- ASSESSMENT MODAL -->
+<div class="modal-overlay" id="assessModal">
+  <div class="modal">
+    <div class="modal-title" id="modal-skill-name">Assessment</div>
+    <div class="modal-sub" id="modal-skill-sub">Answer all questions to evaluate your proficiency</div>
+    <div class="modal-progress" id="modal-progress">Question 1 of 4</div>
+    <div class="progress-wrap"><div class="progress-fill" id="modal-prog-bar" style="width:25%"></div></div>
+    <div style="margin-top:20px;">
+      <div class="question-text" id="modal-question">Loading...</div>
+      <div class="options" id="modal-options"></div>
+      <div class="modal-feedback" id="modal-feedback"></div>
+    </div>
+    <div class="btn-row" style="margin-top:20px;">
+      <button class="btn" id="modal-next-btn" onclick="nextQuestion()" style="display:none;">Next Question →</button>
+      <button class="btn-outline" onclick="closeModal()">✕ Skip</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+
+</body>
+</html>
